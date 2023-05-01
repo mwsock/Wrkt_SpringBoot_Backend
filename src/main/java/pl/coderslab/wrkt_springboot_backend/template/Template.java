@@ -1,5 +1,6 @@
 package pl.coderslab.wrkt_springboot_backend.template;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import pl.coderslab.wrkt_springboot_backend.plan.Plan;
 import pl.coderslab.wrkt_springboot_backend.user.User;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -19,6 +21,7 @@ public class Template {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne
     @JoinColumn(name="plan_id")
     private Plan plan;
@@ -29,15 +32,15 @@ public class Template {
     @JoinTable(name = "template_exercises",
             joinColumns = @JoinColumn(name = "template_id"),
             inverseJoinColumns = @JoinColumn(name = "exercise_id"))
-    private List<Exercise> exercise;
+    private List<Exercise> exercises;
     @ManyToOne
     @JoinColumn(name="user_id")
     private User user;
     @Column(name = "create_date")
-    private LocalDate createDate;
+    private LocalDateTime createDate;
 
     @PrePersist
     public void prePersist() {
-        createDate = LocalDate.now();
+        createDate = LocalDateTime.now();
     }
 }

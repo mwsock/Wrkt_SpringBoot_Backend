@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -20,11 +19,4 @@ public class TemplateExercise {
     private Long templateId;
     @Column(name = "exercise_id")
     private Long exerciseId;
-    @Column(name = "create_date")
-    private LocalDate createDate;
-
-    @PrePersist
-    public void prePersist() {
-        createDate = LocalDate.now();
-    }
 }

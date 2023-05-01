@@ -1,4 +1,4 @@
-package pl.coderslab.wrkt_springboot_backend.user;
+package pl.coderslab.wrkt_springboot_backend;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,11 +8,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.*;
 import pl.coderslab.wrkt_springboot_backend.session.InMemorySessionRegistry;
 import pl.coderslab.wrkt_springboot_backend.session.ResponseDTO;
+import pl.coderslab.wrkt_springboot_backend.user.User;
+import pl.coderslab.wrkt_springboot_backend.user.UserDTO;
+import pl.coderslab.wrkt_springboot_backend.user.UserRepository;
+import pl.coderslab.wrkt_springboot_backend.user.UserService;
 
 @RestController
-@RequestMapping("/user")
 @Slf4j
-public class UserController {
+public class LoginController {
 
     private final AuthenticationManager manager;
     private final InMemorySessionRegistry sessionRegistry;
@@ -20,7 +23,7 @@ public class UserController {
     private final UserService userService;
 
     @Autowired
-    public UserController(AuthenticationManager manager, InMemorySessionRegistry sessionRegistry, UserRepository userRepository, UserService userService) {
+    public LoginController(AuthenticationManager manager, InMemorySessionRegistry sessionRegistry, UserRepository userRepository, UserService userService) {
         this.manager = manager;
         this.sessionRegistry = sessionRegistry;
         this.userRepository = userRepository;
@@ -36,42 +39,15 @@ public class UserController {
         userService.saveUser(newUser);
         return "User added!";
     }
-
-//    @PostMapping("/login")
-//    @ResponseBody
-//    public String logInUser(@RequestBody User user, HttpServletResponse response){
-//        User storedUser = userRepository.findByName(user.getName());
-//        String userName = storedUser.getName();
-//        if(storedUser.getPassword().equals(user.getPassword())){
-//            Cookie userCookie = new Cookie("user",userName);
-//            userCookie.setHttpOnly(true);
-//            response.addCookie(userCookie);
-//           return "LoggedIn";
-//       }
-//       return null;
-//    }
-
-//    @PostMapping("/login")
-//    @ResponseBody
-//    public ResponseEntity<ResponseDTO> login(@RequestBody UserDTO user) {
-//        manager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword()));
-//
-//        ResponseDTO response = new ResponseDTO();
-//        final String sessionId = sessionRegistry.registerSession(user.getUsername());
-//        response.setSessionId(sessionId);
-//
-//        return ResponseEntity.ok(response);
-//    }
-
     @PostMapping("/login")
     @ResponseBody
-    public String login(@RequestBody UserDTO user) {
+    public ResponseEntity<ResponseDTO> login(@RequestBody UserDTO user) {
         manager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword()));
 
         ResponseDTO response = new ResponseDTO();
         final String sessionId = sessionRegistry.registerSession(user.getUsername());
         response.setSessionId(sessionId);
 
-        return sessionId;
+        return ResponseEntity.ok(response);
     }
 }

@@ -25,7 +25,9 @@ public class ExerciseController {
 
     @GetMapping
     public List<Exercise> getExercises(){
-        return exerciseRepository.findAll();
+        return exerciseRepository.findAll().stream()
+                .filter(exercise -> !exercise.isDeleted())
+                .toList();
     }
 
     @PostMapping("/add")
@@ -38,8 +40,14 @@ public class ExerciseController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public void removeExcercise(@RequestParam Long id){
-        log.info("Usunięto: " + id);
+    public void removeExcercise(@PathVariable Long id){
+        log.info("Id ćwiczenia do usunięcia: " + id);
+        Exercise exercise = exerciseRepository.findById(id).orElse(null);
+        if(exercise != null){
+            exercise.setDeleted(true);
+            exerciseRepository.save(exercise);
+            log.info("Usunięto: " + id);
+        }
     }
 
 

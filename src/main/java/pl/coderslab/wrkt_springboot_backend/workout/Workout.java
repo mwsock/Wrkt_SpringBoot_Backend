@@ -1,5 +1,6 @@
 package pl.coderslab.wrkt_springboot_backend.workout;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Generated;
@@ -9,6 +10,7 @@ import pl.coderslab.wrkt_springboot_backend.template.TemplateExercise;
 import pl.coderslab.wrkt_springboot_backend.user.User;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -30,6 +32,7 @@ public class Workout {
     @Column(name = "number_of_repetitions")
     private Integer numberOfRepetitions;
     private Double weight;
+
     @Column(name = "create_date")
     private LocalDate createDate;
 

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import pl.coderslab.wrkt_springboot_backend.user.User;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -27,12 +28,14 @@ public class Exercise {
     @ManyToOne
     @JoinColumn(name="user_id")
     private User user;
+    @Column(columnDefinition = "boolean default false")
+    private boolean deleted;
     @Column(name = "create_date")
-    private LocalDate createDate;
+    private LocalDateTime createDate;
 
     @PrePersist
     public void prePersist() {
-        createDate = LocalDate.now();
+        createDate = LocalDateTime.now();
     }
 
 }
