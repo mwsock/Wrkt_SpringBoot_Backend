@@ -26,6 +26,9 @@ public class InMemorySessionRegistry {
         return SESSIONS.get(sessionId);
     }
 
+    public void deleteSessionForUser(String sessionId, String username){
+        SESSIONS.remove(sessionId,username);
+    }
     private String generateSessionId(){
         return new String(
                 Base64.getEncoder().encode(

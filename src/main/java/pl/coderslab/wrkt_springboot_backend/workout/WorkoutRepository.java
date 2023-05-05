@@ -16,4 +16,6 @@ public interface WorkoutRepository extends JpaRepository<Workout,Long> {
     List<Workout> findWorkoutByCreateDateAndTemplateExercise(LocalDate createDate, TemplateExercise templateExercise);
     List<Workout> findByUser(User user);
     List<Workout> findByTemplateExerciseIdAndCreateDate(Long templateExerciseId,LocalDate createDate);
+
+    void deleteByTemplateExerciseAndCreateDate(TemplateExercise templateExercise,LocalDate createDate);
 }

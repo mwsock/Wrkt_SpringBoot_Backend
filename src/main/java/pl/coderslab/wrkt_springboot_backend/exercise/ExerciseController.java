@@ -13,41 +13,29 @@ import java.util.List;
 @Slf4j
 public class ExerciseController {
 
-    private ExerciseRepository exerciseRepository;
-    private UserRepository userRepository;
+    private final ExerciseService exerciseService;
 
     @Autowired
-    public ExerciseController(ExerciseRepository exerciseRepository, UserRepository userRepository) {
-        this.exerciseRepository = exerciseRepository;
-        this.userRepository = userRepository;
+    public ExerciseController(ExerciseService exerciseService) {
+        this.exerciseService = exerciseService;
     }
 
 
     @GetMapping
     public List<Exercise> getExercises(){
-        return exerciseRepository.findAll().stream()
-                .filter(exercise -> !exercise.isDeleted())
-                .toList();
+        return exerciseService.getExercises();
     }
 
     @PostMapping("/add")
     public String addExercise(@RequestBody Exercise exercise){
         log.info("New Exercise: " + exercise.toString());
-        User user = userRepository.findByName(exercise.getUser().getName());
-        exercise.setUser(user);
-        userRepository.save(exercise.getUser());
-        return "New Exercise: " + exerciseRepository.save(exercise);
+        return exerciseService.addExercise(exercise);
     }
 
     @DeleteMapping("/delete/{id}")
     public void removeExcercise(@PathVariable Long id){
         log.info("Id ćwiczenia do usunięcia: " + id);
-        Exercise exercise = exerciseRepository.findById(id).orElse(null);
-        if(exercise != null){
-            exercise.setDeleted(true);
-            exerciseRepository.save(exercise);
-            log.info("Usunięto: " + id);
-        }
+        exerciseService.removeExcercise(id);
     }
 
 

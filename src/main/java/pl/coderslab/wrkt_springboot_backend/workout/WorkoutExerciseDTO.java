@@ -12,6 +12,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class WorkoutExerciseDTO {
 
+    private long exerciseId;
     private String exerciseName;
     private List<WorkoutExerciseLogDTO> exerciseLogList;
 
@@ -21,11 +22,11 @@ public class WorkoutExerciseDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WorkoutExerciseDTO that = (WorkoutExerciseDTO) o;
-        return Objects.equals(exerciseName, that.exerciseName) && Objects.equals(exerciseLogList, that.exerciseLogList);
+        return exerciseId == that.exerciseId && Objects.equals(exerciseName, that.exerciseName) && Objects.equals(exerciseLogList, that.exerciseLogList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(exerciseName, exerciseLogList);
+        return Objects.hash(exerciseId, exerciseName, exerciseLogList);
     }
 }

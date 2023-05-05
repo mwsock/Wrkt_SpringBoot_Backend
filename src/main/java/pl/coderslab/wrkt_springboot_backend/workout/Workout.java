@@ -32,14 +32,8 @@ public class Workout {
     @Column(name = "number_of_repetitions")
     private Integer numberOfRepetitions;
     private Double weight;
-
-    @Column(name = "create_date")
     private LocalDate createDate;
 
-    @PrePersist
-    public void prePersist() {
-        createDate = LocalDate.now();
-    }
 
 
 

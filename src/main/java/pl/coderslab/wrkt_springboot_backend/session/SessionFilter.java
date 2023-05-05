@@ -8,12 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import pl.coderslab.wrkt_springboot_backend.user.CurrentUser;
-import pl.coderslab.wrkt_springboot_backend.user.SpringDataUserDetailsService;
+import pl.coderslab.wrkt_springboot_backend.user.UserDetailsService;
 
 import java.io.IOException;
 
@@ -21,14 +20,13 @@ import java.io.IOException;
 public class SessionFilter extends OncePerRequestFilter {
 
     private final InMemorySessionRegistry sessionRegistry;
-    private final SpringDataUserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
-    public SessionFilter(InMemorySessionRegistry sessionRegistry, SpringDataUserDetailsService userDetailsService) {
+    public SessionFilter(InMemorySessionRegistry sessionRegistry, UserDetailsService userDetailsService) {
         this.sessionRegistry = sessionRegistry;
         this.userDetailsService = userDetailsService;
     }
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
