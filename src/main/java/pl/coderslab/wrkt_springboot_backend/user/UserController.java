@@ -2,6 +2,7 @@ package pl.coderslab.wrkt_springboot_backend.user;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +22,13 @@ public class UserController {
 
     @PostMapping("/register")
     @ResponseBody
-    public String registerUser(@RequestBody UserDTO userDTO){
+    public String registerUser(@Valid @RequestBody RegisterUserDTO userDTO){
         return userService.registerUser(userDTO);
     }
 
     @PostMapping("/login")
     @ResponseBody
-    public ResponseEntity<ResponseDTO> login(@RequestBody UserDTO userDTO, HttpServletResponse response) {
+    public ResponseEntity<ResponseDTO> login(@Valid @RequestBody UserDTO userDTO, HttpServletResponse response) {
         return ResponseEntity.ok(userService.login(userDTO,response));
     }
 

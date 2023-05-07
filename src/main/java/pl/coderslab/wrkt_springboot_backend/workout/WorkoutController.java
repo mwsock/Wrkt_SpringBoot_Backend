@@ -1,6 +1,7 @@
 package pl.coderslab.wrkt_springboot_backend.workout;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -38,9 +39,9 @@ public class WorkoutController {
     }
 
     @PostMapping("/add")
-    public void addWorkout(@RequestBody Workout[] workout){
-        log.info("New workout: " + Arrays.toString(workout));
-        workoutService.addWorkout(workout);
+    public void addWorkout(@Valid @RequestBody RequestWorkoutDTO[] requestWorkoutDTO){
+        log.info("New workout: " + Arrays.toString(requestWorkoutDTO));
+        workoutService.addWorkout(requestWorkoutDTO);
     }
 
     @PutMapping

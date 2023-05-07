@@ -1,12 +1,14 @@
 package pl.coderslab.wrkt_springboot_backend.exercise;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.coderslab.wrkt_springboot_backend.user.User;
-import pl.coderslab.wrkt_springboot_backend.user.UserRepository;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/exercise")
@@ -20,23 +22,25 @@ public class ExerciseController {
         this.exerciseService = exerciseService;
     }
 
-
     @GetMapping
-    public List<Exercise> getExercises(){
-        return exerciseService.getExercises();
+    public List<ExerciseDTO> getExercises(HttpServletRequest request){
+        return exerciseService.getExercises(request);
     }
 
     @PostMapping("/add")
-    public String addExercise(@RequestBody Exercise exercise){
-        log.info("New Exercise: " + exercise.toString());
-        return exerciseService.addExercise(exercise);
+    public String addExercise(@Valid @RequestBody ExerciseDTO exerciseDTO){
+        log.info("New Exercise: " + exerciseDTO.toString());
+        return exerciseService.addExercise(exerciseDTO);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void removeExcercise(@PathVariable Long id){
+    public ResponseEntity<String> removeExcercise(@PathVariable Long id){
         log.info("Id ćwiczenia do usunięcia: " + id);
         exerciseService.removeExcercise(id);
+        return ResponseEntity.ok("Exercise Deleted!");
     }
+
+
 
 
 }

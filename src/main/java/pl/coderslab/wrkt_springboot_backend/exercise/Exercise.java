@@ -1,9 +1,7 @@
 package pl.coderslab.wrkt_springboot_backend.exercise;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import pl.coderslab.wrkt_springboot_backend.user.User;
 
 import java.time.LocalDate;
@@ -12,14 +10,12 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Entity
+@Builder
 @Table(name = "exercises")
 public class Exercise {
-
-    public Exercise(String name, User user) {
-        this.name = name;
-        this.user = user;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

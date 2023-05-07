@@ -1,5 +1,6 @@
 package pl.coderslab.wrkt_springboot_backend.template;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +32,8 @@ public class TemplateController {
     }
 
     @PostMapping("/add")
-    public void addTemplate(@RequestBody Template template){
-        log.info("New template: " + template.toString());
-        templateService.addTemplate(template);
+    public void addTemplate(@Valid @RequestBody TemplateDTO templateDTO){
+        log.info("New template: " + templateDTO.toString());
+        templateService.addTemplate(templateDTO);
     }
 }

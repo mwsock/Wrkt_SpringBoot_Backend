@@ -4,22 +4,17 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import pl.coderslab.wrkt_springboot_backend.role.Role;
 import pl.coderslab.wrkt_springboot_backend.role.RoleRepository;
 import pl.coderslab.wrkt_springboot_backend.session.InMemorySessionRegistry;
 import pl.coderslab.wrkt_springboot_backend.session.ResponseDTO;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -29,50 +24,53 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationManager manager;
     private final InMemorySessionRegistry sessionRegistry;
-
     private static final int COOKIE_MAX_AGE = 900;
     private static final String DEFAULT_ROLE = "ROLE_USER";
+    private final UserMapper userMapper;
+    private final RegisterUserMapper registerUserMapper;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, AuthenticationManager manager, InMemorySessionRegistry sessionRegistry, UserService userService) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder, AuthenticationManager manager, InMemorySessionRegistry sessionRegistry, UserMapper userMapper, RegisterUserMapper registerUserMapper) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.manager = manager;
         this.sessionRegistry = sessionRegistry;
+        this.userMapper = userMapper;
+        this.registerUserMapper = registerUserMapper;
     }
 
-    public User findByUserName(String name) {
-        return userRepository.findByName(name);
-    }
 
-    public String registerUser(UserDTO userDTO){
-        UserDTO newUser = UserDTO.builder()
-                .username(userDTO.getUsername())
-                .password(userDTO.getPassword())
-                .build();
-        saveUser(newUser);
+    public String registerUser(RegisterUserDTO userDTO){
+        User user = registerUserMapper.mapToUser(userDTO);
+        saveUser(user);
         return "User added!";
     }
 
-    public void saveUser(UserDTO userDTO) {
-        User user = new User();
-        user.setName(userDTO.getUsername());
-        user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
+    public void saveUser(User user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setEnabled(1);
-        
+
+        HashSet<Role> roles = getRole();
+
+        user.setRoles(roles);
+        userRepository.save(user);
+    }
+
+    private HashSet<Role> getRole() {
         Role userRole = roleRepository.findByName(DEFAULT_ROLE);
         if(Objects.isNull(userRole)){
             userRole = new Role(null,DEFAULT_ROLE);
         }
-        user.setRoles(new HashSet<>(List.of(userRole)));
-        userRepository.save(user);
+        HashSet<Role> roles = new HashSet<>();
+        roles.add(userRole);
+        return roles;
     }
 
     public ResponseDTO login(UserDTO userDTO, HttpServletResponse response) {
-        Authentication authentication = manager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getUsername(),userDTO.getPassword()));
+        Authentication authentication = manager.authenticate(new UsernamePasswordAuthenticationToken(userDTO.getName(),userDTO.getPassword()));
 
-        String sessionId = sessionRegistry.registerSession(userDTO.getUsername());
+        String sessionId = sessionRegistry.registerSession(userDTO.getName());
 
         // TODO: 06.05.2023 zmienić metodę na void
         ResponseDTO responseDTO = new ResponseDTO();
@@ -82,7 +80,7 @@ public class UserService {
             Cookie sessionIdcookie = prepareCookie("sessionId",sessionId);
             response.addCookie(sessionIdcookie);
 
-            Cookie userCookie = prepareCookie("user",userDTO.getUsername());
+            Cookie userCookie = prepareCookie("user",userDTO.getName());
             response.addCookie(userCookie);
         }
 

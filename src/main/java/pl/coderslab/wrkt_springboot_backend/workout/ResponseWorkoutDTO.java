@@ -1,5 +1,6 @@
 package pl.coderslab.wrkt_springboot_backend.workout;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
 public class ResponseWorkoutDTO {
 
     private long templateId;

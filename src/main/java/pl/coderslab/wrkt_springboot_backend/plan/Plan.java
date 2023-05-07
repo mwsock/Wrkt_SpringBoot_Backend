@@ -2,9 +2,7 @@ package pl.coderslab.wrkt_springboot_backend.plan;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import pl.coderslab.wrkt_springboot_backend.user.User;
 
 import java.time.LocalDate;
@@ -13,6 +11,8 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name="plans")
 public class Plan {

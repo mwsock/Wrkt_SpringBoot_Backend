@@ -1,6 +1,5 @@
 package pl.coderslab.wrkt_springboot_backend.config;
 
-import jakarta.servlet.http.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,17 +9,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import pl.coderslab.wrkt_springboot_backend.session.InMemorySessionRegistry;
 import pl.coderslab.wrkt_springboot_backend.session.SessionFilter;
 import pl.coderslab.wrkt_springboot_backend.user.UserDetailsService;
 
-import java.util.Arrays;
-
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
-
+public class AppConfig {
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http, SessionFilter sessionFilter, InMemorySessionRegistry sessionRegistry) throws Exception {
@@ -59,9 +55,9 @@ public class SecurityConfig {
                 .build();
     }
 
-
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

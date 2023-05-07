@@ -1,10 +1,10 @@
 package pl.coderslab.wrkt_springboot_backend.plan;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import pl.coderslab.wrkt_springboot_backend.user.User;
-import pl.coderslab.wrkt_springboot_backend.user.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
@@ -21,14 +21,14 @@ public class PlanController {
     }
 
     @GetMapping
-    public List<Plan> getPlans(){
-        return planService.getPlans();
+    public List<PlanDTO> getPlans(HttpServletRequest request){
+        return planService.getPlans(request);
     }
 
     @PostMapping("/add")
-    public String addPlan(@RequestBody Plan plan){
-        log.info("New plan: " + plan.toString());
-        return planService.addPlan(plan);
+    public String addPlan(@Valid @RequestBody PlanDTO planDTO){
+        log.info("New plan: " + planDTO.toString());
+        return planService.addPlan(planDTO);
     }
 
     @DeleteMapping("/delete/{id}")
