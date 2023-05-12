@@ -27,6 +27,16 @@ public class ExerciseController {
         this.exerciseService = exerciseService;
     }
 
+    @Operation(summary = "Find sample exercises for user", description = "Returns a list of sample exercises saved for user",
+            tags = { "exercise" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation",
+                    content = @Content(mediaType = "application/json",schema = @Schema(implementation = ExerciseDTO.class)))})
+    @GetMapping("/samples")
+    public List<ExerciseDTO> getSampleExercises(@RequestHeader(value="sessionId") String sessionId,HttpServletRequest request){
+        return exerciseService.getSampleExercises(request.getHeader("sessionId"));
+    }
+
     @Operation(summary = "Find exercises for user", description = "Returns a list of exercises defined by user",
             tags = { "exercise" })
     @ApiResponses(value = {

@@ -25,6 +25,7 @@ public class Exercise {
     @JoinColumn(name="user_id")
     private User user;
     private boolean deleted = false;
+    private boolean sample = false;
     @Column(name = "create_date")
     private LocalDateTime createDate;
 

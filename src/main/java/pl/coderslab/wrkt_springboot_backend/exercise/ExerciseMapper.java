@@ -15,4 +15,6 @@ public interface ExerciseMapper {
     @Mapping(source="userDTO.name",target = "user.name")
     Exercise mapToExercise(ExerciseDTO exerciseDTO);
 
+    Exercise mapSampleToExercise(SampleExerciseDTO sampleExerciseDTO);
+
 }
