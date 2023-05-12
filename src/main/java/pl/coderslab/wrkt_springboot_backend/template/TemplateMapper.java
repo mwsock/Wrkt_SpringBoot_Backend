@@ -8,7 +8,7 @@ import org.mapstruct.factory.Mappers;
 public interface TemplateMapper {
 
     TemplateMapper INSTANCE = Mappers.getMapper(TemplateMapper.class);
-    @Mapping(source="user.name",target ="userDTO.name")
+    @Mapping(target = "userDTO", ignore = true)
     @Mapping(source = "plan.id", target = "planDTO.id")
     @Mapping(source = "plan.name", target = "planDTO.name")
     TemplateDTO mapToTemplateDTO(Template template);

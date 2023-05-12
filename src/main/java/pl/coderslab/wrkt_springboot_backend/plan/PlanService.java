@@ -8,6 +8,7 @@ import pl.coderslab.wrkt_springboot_backend.session.InMemorySessionRegistry;
 import pl.coderslab.wrkt_springboot_backend.user.User;
 import pl.coderslab.wrkt_springboot_backend.user.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,13 +29,17 @@ public class PlanService {
         this.registry = registry;
     }
 
-    public List<PlanDTO> getPlans(HttpServletRequest request){
-        String userName = registry.getUserNameForSession(request.getHeader("Authorization"));
+    public List<PlanDTO> getPlans(String sessionId){
+        String userName = registry.getUserNameForSession(sessionId);
         User user = userRepository.findByName(userName);
-        return planRepository.findByUser(user).stream()
+        List<PlanDTO> planDTOList = new ArrayList<>();
+        if(user!=null){
+            planDTOList = planRepository.findByUser(user).stream()
                 .filter(plan -> !plan.isDeleted())
                 .map(planMapper::mapToPlanDTO)
                 .collect(Collectors.toList());
+        }
+        return planDTOList;
     }
 
     public String addPlan(PlanDTO planDTO){

@@ -1,5 +1,10 @@
 package pl.coderslab.wrkt_springboot_backend.exercise;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -22,17 +27,33 @@ public class ExerciseController {
         this.exerciseService = exerciseService;
     }
 
+    @Operation(summary = "Find exercises for user", description = "Returns a list of exercises defined by user",
+            tags = { "exercise" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation",
+                    content = @Content(mediaType = "application/json",schema = @Schema(implementation = ExerciseDTO.class)))})
     @GetMapping
-    public List<ExerciseDTO> getExercises(HttpServletRequest request){
-        return exerciseService.getExercises(request);
+    public List<ExerciseDTO> getExercises(@RequestHeader(value="sessionId") String sessionId,HttpServletRequest request){
+        return exerciseService.getExercises(request.getHeader("sessionId"));
     }
 
+    @Operation(summary = "Add exercise for specific user", description = "Adds a new exercise defined by user",
+            tags = { "exercise" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation",
+                    content = @Content(mediaType = "application/json",schema = @Schema(implementation = String.class)))})
     @PostMapping("/add")
-    public String addExercise(@Valid @RequestBody ExerciseDTO exerciseDTO){
+    public ResponseEntity<String> addExercise(@Valid @RequestBody ExerciseDTO exerciseDTO){
         log.info("New Exercise: " + exerciseDTO.toString());
-        return exerciseService.addExercise(exerciseDTO);
+        exerciseService.addExercise(exerciseDTO);
+        return ResponseEntity.ok("Exercise added!");
     }
 
+    @Operation(summary = "Delete exercise for specific user", description = "Deletes specific exercise by setting 'DELETED' flag",
+            tags = { "exercise" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation",
+                    content = @Content(mediaType = "application/json",schema = @Schema(implementation = String.class)))})
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> removeExcercise(@PathVariable Long id){
         log.info("Id ćwiczenia do usunięcia: " + id);

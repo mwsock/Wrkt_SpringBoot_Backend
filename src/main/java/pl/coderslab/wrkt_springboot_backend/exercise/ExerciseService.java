@@ -28,8 +28,8 @@ public class ExerciseService {
         this.exerciseMapper = exerciseMapper;
     }
 
-    public List<ExerciseDTO> getExercises(HttpServletRequest request){
-        String userName = registry.getUserNameForSession(request.getHeader("Authorization"));
+    public List<ExerciseDTO> getExercises(String sessionId){
+        String userName = registry.getUserNameForSession(sessionId);
         User user = userRepository.findByName(userName);
         return exerciseRepository.findByUser(user).stream()
                 .filter(exercise -> !exercise.isDeleted())
@@ -41,7 +41,6 @@ public class ExerciseService {
         Exercise exercise = exerciseMapper.mapToExercise(exerciseDTO);
         User user = userRepository.findByName(exercise.getUser().getName());
         exercise.setUser(user);
-        userRepository.save(exercise.getUser());
         return "New Exercise: " + exerciseRepository.save(exercise).getName();
     }
 

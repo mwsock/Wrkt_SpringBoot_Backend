@@ -1,1 +1,1 @@
-create database SPRING_CMS_DB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+create database WORKOUT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

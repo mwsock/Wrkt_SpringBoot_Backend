@@ -11,8 +11,6 @@ import java.util.List;
 
 @Repository
 public interface WorkoutRepository extends JpaRepository<Workout,Long> {
-    @Query("select w from Workout w where w.createDate = (select max(createDate) from Workout where User = ?1)")
-    List<Workout> findLastWorkoutForUser(User user);
     List<Workout> findWorkoutByCreateDateAndTemplateExercise(LocalDate createDate, TemplateExercise templateExercise);
     List<Workout> findByUser(User user);
     List<Workout> findByTemplateExerciseIdAndCreateDate(Long templateExerciseId,LocalDate createDate);

@@ -24,8 +24,7 @@ public class Exercise {
     @ManyToOne
     @JoinColumn(name="user_id")
     private User user;
-    @Column(columnDefinition = "boolean default false")
-    private boolean deleted;
+    private boolean deleted = false;
     @Column(name = "create_date")
     private LocalDateTime createDate;
 

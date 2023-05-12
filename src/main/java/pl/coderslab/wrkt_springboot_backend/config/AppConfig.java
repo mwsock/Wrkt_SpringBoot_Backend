@@ -1,5 +1,9 @@
 package pl.coderslab.wrkt_springboot_backend.config;
 
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,47 +21,5 @@ import pl.coderslab.wrkt_springboot_backend.user.UserDetailsService;
 @Configuration
 @EnableWebSecurity
 public class AppConfig {
-
-    @Bean
-    protected SecurityFilterChain configure(HttpSecurity http, SessionFilter sessionFilter, InMemorySessionRegistry sessionRegistry) throws Exception {
-        http.csrf()
-                .disable()
-                .authorizeHttpRequests(requests -> {
-                    try {
-                        requests.requestMatchers("/user/login").permitAll()
-                                .requestMatchers("/user/register").permitAll()
-                                .requestMatchers("/*").authenticated()
-                                .requestMatchers("/*/*").authenticated()
-                                .requestMatchers("/*/*/*").authenticated()
-                                .and()
-                                .httpBasic()
-                                .and()
-                                .sessionManagement()
-                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-
-        http.addFilterBefore(
-                sessionFilter,
-                CustomUsernamePasswordAuthenticationFilter.class
-        );
-        return http.build();
-    }
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder, UserDetailsService userDetailsService)
-            throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(bCryptPasswordEncoder)
-                .and()
-                .build();
-    }
-
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
 }

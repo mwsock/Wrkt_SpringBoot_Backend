@@ -8,7 +8,7 @@ import org.mapstruct.factory.Mappers;
 public interface PlanMapper {
 
     PlanMapper INSTANCE = Mappers.getMapper(PlanMapper.class);
-    @Mapping(source="user.name",target ="userDTO.name")
+    @Mapping(target = "userDTO", ignore = true)
     PlanDTO mapToPlanDTO(Plan plan);
     @Mapping(source="userDTO.name",target = "user.name")
     Plan mapToPlan(PlanDTO planDTO);

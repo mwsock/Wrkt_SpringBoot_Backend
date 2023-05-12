@@ -49,8 +49,8 @@ public class WorkoutService {
         this.templateService = templateService;
     }
 
-    public Set<ResponseWorkoutDTO> getUserWorkouts(HttpServletRequest request){
-        String userName = registry.getUserNameForSession(request.getHeader("Authorization"));
+    public Set<ResponseWorkoutDTO> getUserWorkouts(String sessionId){
+        String userName = registry.getUserNameForSession(sessionId);
         User user = userRepository.findByName(userName);
         return workoutRepository.findByUser(user).stream()
                 .map(this::getResponseWorkoutDTO)
@@ -71,8 +71,8 @@ public class WorkoutService {
         return templateRepository.findById(workout.getTemplateExercise().getTemplateId()).orElse(null);
     }
 
-    public Set<ResponseWorkoutDTO> getLastUserWorkout(HttpServletRequest request){
-        String userName = registry.getUserNameForSession(request.getHeader("Authorization"));
+    public Set<ResponseWorkoutDTO> getLastUserWorkout(String sessionId){
+        String userName = registry.getUserNameForSession(sessionId);
         User user = userRepository.findByName(userName);
         List<Workout> workout = workoutRepository.findByUser(user);
 

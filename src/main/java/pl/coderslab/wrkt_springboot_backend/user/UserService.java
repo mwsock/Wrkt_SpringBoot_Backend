@@ -72,10 +72,8 @@ public class UserService {
 
         String sessionId = sessionRegistry.registerSession(userDTO.getName());
 
-        // TODO: 06.05.2023 zmienić metodę na void
         ResponseDTO responseDTO = new ResponseDTO();
         responseDTO.setSessionId(sessionId);
-        
         if(authentication.isAuthenticated()){
             Cookie sessionIdcookie = prepareCookie("sessionId",sessionId);
             response.addCookie(sessionIdcookie);
@@ -104,15 +102,15 @@ public class UserService {
     }
 
     public String logout(HttpServletRequest request, HttpServletResponse response){
-        String user = sessionRegistry.getUserNameForSession(request.getHeader("Authorization"));
-        sessionRegistry.deleteSessionForUser(request.getHeader("Authorization"),user);
+        String user = sessionRegistry.getUserNameForSession(request.getHeader("sessionId"));
+        sessionRegistry.deleteSessionForUser(request.getHeader("sessionId"),user);
 
         Cookie sessionIdCookieToDelete = prepareCookieToDelete("sessionId",null,0);
         response.addCookie(sessionIdCookieToDelete);
 
         Cookie userCookieToDelete = prepareCookieToDelete("user",null,0);
         response.addCookie(userCookieToDelete);
-        // TODO: 06.05.2023 zmienić metodę na void
+
         return user + " logged out.";
     }
 }

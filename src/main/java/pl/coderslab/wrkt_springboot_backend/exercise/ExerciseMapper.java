@@ -8,7 +8,8 @@ import org.mapstruct.factory.Mappers;
 public interface ExerciseMapper {
 
     ExerciseMapper INSTANCE = Mappers.getMapper(ExerciseMapper.class);
-    @Mapping(source="user.name",target ="userDTO.name")
+
+    @Mapping(target = "userDTO", ignore = true)
     ExerciseDTO mapToExerciseDTO(Exercise exercise);
 
     @Mapping(source="userDTO.name",target = "user.name")

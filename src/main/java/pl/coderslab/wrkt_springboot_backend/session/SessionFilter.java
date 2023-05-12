@@ -30,7 +30,7 @@ public class SessionFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String sessionId = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String sessionId = request.getHeader("sessionId");
 
         if(sessionId == null || sessionId.length() == 0){
             filterChain.doFilter(request,response);
