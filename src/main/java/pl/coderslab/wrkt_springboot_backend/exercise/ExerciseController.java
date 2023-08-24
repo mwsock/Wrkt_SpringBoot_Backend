@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/exercise")
@@ -33,7 +32,7 @@ public class ExerciseController {
             @ApiResponse(responseCode = "200", description = "successful operation",
                     content = @Content(mediaType = "application/json",schema = @Schema(implementation = ExerciseDTO.class)))})
     @GetMapping("/samples")
-    public List<ExerciseDTO> getSampleExercises(@RequestHeader(value="sessionId") String sessionId,HttpServletRequest request){
+    public List<ExerciseDTO> getSampleExercises(@RequestHeader(value="sessionId") HttpServletRequest request){
         return exerciseService.getSampleExercises(request.getHeader("sessionId"));
     }
 
@@ -43,7 +42,7 @@ public class ExerciseController {
             @ApiResponse(responseCode = "200", description = "successful operation",
                     content = @Content(mediaType = "application/json",schema = @Schema(implementation = ExerciseDTO.class)))})
     @GetMapping
-    public List<ExerciseDTO> getExercises(@RequestHeader(value="sessionId") String sessionId,HttpServletRequest request){
+    public List<ExerciseDTO> getExercises(@RequestHeader(value="sessionId") HttpServletRequest request){
         return exerciseService.getExercises(request.getHeader("sessionId"));
     }
 
@@ -67,7 +66,7 @@ public class ExerciseController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> removeExcercise(@PathVariable Long id){
         log.info("Id ćwiczenia do usunięcia: " + id);
-        exerciseService.removeExcercise(id);
+        exerciseService.removeExercise(id);
         return ResponseEntity.ok("Exercise Deleted!");
     }
 

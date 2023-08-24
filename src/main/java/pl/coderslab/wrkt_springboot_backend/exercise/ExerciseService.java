@@ -1,6 +1,5 @@
 package pl.coderslab.wrkt_springboot_backend.exercise;
 
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -10,10 +9,7 @@ import pl.coderslab.wrkt_springboot_backend.session.InMemorySessionRegistry;
 import pl.coderslab.wrkt_springboot_backend.user.User;
 import pl.coderslab.wrkt_springboot_backend.user.UserRepository;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,11 +53,12 @@ public class ExerciseService {
         return "New Exercise: " + exerciseRepository.save(exercise).getName();
     }
 
-    public void removeExcercise(Long id){
-        Exercise exercise = exerciseRepository.findById(id).orElse(null);
-        if(exercise != null){
-            exercise.setDeleted(true);
-            exerciseRepository.save(exercise);
+    public void removeExercise(Long id){
+        Optional<Exercise> exercise = exerciseRepository.findById(id);
+        if(exercise.isPresent()){
+            Exercise exerciseToDelete = exercise.get();
+            exerciseToDelete.setDeleted(true);
+            exerciseRepository.save(exerciseToDelete);
             log.info("Usunięto: " + id);
         }
     }

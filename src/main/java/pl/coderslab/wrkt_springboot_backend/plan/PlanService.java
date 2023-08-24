@@ -1,6 +1,5 @@
 package pl.coderslab.wrkt_springboot_backend.plan;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +9,7 @@ import pl.coderslab.wrkt_springboot_backend.user.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,18 +42,19 @@ public class PlanService {
         return planDTOList;
     }
 
-    public String addPlan(PlanDTO planDTO){
+    public void addPlan(PlanDTO planDTO){
         Plan plan = planMapper.mapToPlan(planDTO);
         User user = userRepository.findByName(plan.getUser().getName());
         plan.setUser(user);
-        return "New plan saved: " + planRepository.save(plan).getName();
+        planRepository.save(plan);
     }
 
     public void removePlan(Long id){
-        Plan plan = planRepository.findById(id).orElse(null);
-        if(plan != null){
-            plan.setDeleted(true);
-            planRepository.save(plan);
+        Optional<Plan> plan = planRepository.findById(id);
+        if(plan.isPresent()){
+            Plan planToDelete = plan.get();
+            planToDelete.setDeleted(true);
+            planRepository.save(planToDelete);
             log.info("Usunięto: " + id);
         }
     }

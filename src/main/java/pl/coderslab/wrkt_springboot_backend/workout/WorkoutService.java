@@ -1,12 +1,12 @@
 package pl.coderslab.wrkt_springboot_backend.workout;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.coderslab.wrkt_springboot_backend.exercise.Exercise;
 import pl.coderslab.wrkt_springboot_backend.exercise.ExerciseRepository;
+import pl.coderslab.wrkt_springboot_backend.plan.Plan;
 import pl.coderslab.wrkt_springboot_backend.session.InMemorySessionRegistry;
 import pl.coderslab.wrkt_springboot_backend.template.*;
 import pl.coderslab.wrkt_springboot_backend.user.User;
@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class WorkoutService {
-
     private final WorkoutRepository workoutRepository;
     private final TemplateExerciseRepository templateExerciseRepository;
     private final UserRepository userRepository;
@@ -51,18 +50,24 @@ public class WorkoutService {
 
     public Set<ResponseWorkoutDTO> getUserWorkouts(String sessionId){
         String userName = registry.getUserNameForSession(sessionId);
-        User user = userRepository.findByName(userName);
-        return workoutRepository.findByUser(user).stream()
+        User user = getUserByName(userName);
+        return getWorkoutByUser(user).stream()
                 .map(this::getResponseWorkoutDTO)
                 .collect(Collectors.toSet());
     }
 
+    private User getUserByName(String userName) {
+        return userRepository.findByName(userName);
+    }
+
     private ResponseWorkoutDTO getResponseWorkoutDTO(Workout workout) {
+        Template template = getTemplateForWorkoutLog(workout);
+        Plan plan = template.getPlan();
         return ResponseWorkoutDTO.builder()
                 .templateId(workout.getTemplateExercise().getTemplateId())
-                .planId(getTemplateForWorkoutLog(workout).getPlan().getId())
-                .planName(getTemplateForWorkoutLog(workout).getPlan().getName())
-                .day(getTemplateForWorkoutLog(workout).getDay())
+                .planId(plan.getId())
+                .planName(plan.getName())
+                .day(template.getDay())
                 .createDate(workout.getCreateDate())
                 .build();
     }
@@ -73,18 +78,23 @@ public class WorkoutService {
 
     public Set<ResponseWorkoutDTO> getLastUserWorkout(String sessionId){
         String userName = registry.getUserNameForSession(sessionId);
-        User user = userRepository.findByName(userName);
-        List<Workout> workout = workoutRepository.findByUser(user);
+        User user = getUserByName(userName);
+        List<Workout> workout = getWorkoutByUser(user);
 
         LocalDate workoutCreatDate = workout.stream()
                 .map(Workout::getCreateDate)
                 .max(Comparator.naturalOrder()).orElse(null);
+
         List<TemplateExercise> templateExercises = workout.stream()
                 .filter(log -> log.getCreateDate().equals(workoutCreatDate))
                 .map(Workout::getTemplateExercise)
                 .collect(Collectors.toList());
 
         return getResponseWorkoutDTOs(workoutCreatDate,templateExercises);
+    }
+
+    private List<Workout> getWorkoutByUser(User user) {
+        return workoutRepository.findByUser(user);
     }
 
     public Set<ResponseWorkoutDTO> getUserWorkoutByPlanIdAndCreateDate(Long planId,LocalDate createDate){
@@ -94,7 +104,7 @@ public class WorkoutService {
                 .collect(Collectors.toList());
 
         List<TemplateExercise> templateExercises = new ArrayList<>();
-        templateIds.forEach(id -> templateExercises.addAll(templateExerciseRepository.findByTemplateId(id)));
+        templateIds.forEach(id -> templateExercises.addAll(getTemplateExercisesByTemplateId(id)));
 
         return getResponseWorkoutDTOs(createDate, templateExercises);
     }
@@ -104,11 +114,12 @@ public class WorkoutService {
                 .stream()
                 .map(requestWorkoutDTOMapper::mapToWorkout)
                 .collect(Collectors.toList());
+
         for (Workout value : workout) {
             long templateId = value.getTemplateExercise().getTemplateId();
             long exerciseId = value.getTemplateExercise().getExerciseId();
             value.setTemplateExercise(templateExerciseRepository.findByTemplateIdAndExerciseId(templateId, exerciseId));
-            value.setUser(userRepository.findByName(value.getUser().getName()));
+            value.setUser(getUserByName(value.getUser().getName()));
         }
         workoutRepository.saveAll(workout);
     }
@@ -167,8 +178,8 @@ public class WorkoutService {
 
             Long id = getWorkoutId(workoutEntity, exerciseId, templateExercise);
 
-            workoutEntity.setTemplateExercise(templateExerciseRepository.findByTemplateIdAndExerciseId(templateId, exerciseId));
-            workoutEntity.setUser(userRepository.findByName(value.getUser().getName()));
+            workoutEntity.setTemplateExercise(templateExercise);
+            workoutEntity.setUser(getUserByName(value.getUser().getName()));
             workoutEntity.setId(id);
 
             workouts.add(workoutEntity);
@@ -179,7 +190,8 @@ public class WorkoutService {
     private Long getWorkoutId(Workout workoutEntity, long exerciseId, TemplateExercise templateExercise) {
         return workoutRepository.findByTemplateExerciseIdAndCreateDate(templateExercise.getId(), workoutEntity.getCreateDate())
                 .stream()
-                .filter(workout -> workout.getWorkSet().equals(workoutEntity.getWorkSet()) && workout.getTemplateExercise().getExerciseId().equals(exerciseId))
+                .filter(workout -> workout.getWorkSet().equals(workoutEntity.getWorkSet()))
+                .filter(workout -> workout.getTemplateExercise().getExerciseId().equals(exerciseId))
                 .findFirst()
                 .orElse(new Workout())
                 .getId();
@@ -188,11 +200,15 @@ public class WorkoutService {
 
     @Transactional
     public void deleteWorkout(Long templateId, LocalDate createDate){
-        List<TemplateExercise> templateExercises = templateExerciseRepository.findByTemplateId(templateId);
+        List<TemplateExercise> templateExercises = getTemplateExercisesByTemplateId(templateId);
 
         templateExercises.forEach(templateExercise -> workoutRepository
                 .deleteByTemplateExerciseAndCreateDate(templateExercise,createDate));
         log.info("Usunięto szablon!");
+    }
+
+    private List<TemplateExercise> getTemplateExercisesByTemplateId(Long templateId) {
+        return templateExerciseRepository.findByTemplateId(templateId);
     }
 
 
@@ -209,12 +225,13 @@ public class WorkoutService {
     }
 
     private ResponseWorkoutDTO getResponseWorkoutDTO(HashSet<WorkoutExerciseDTO> workoutExerciseDTOList, Workout workout) {
+        Template template = getTemplateForWorkoutLogNyTemplateId(workout);
         return ResponseWorkoutDTO
                 .builder()
                 .templateId(workout.getTemplateExercise().getTemplateId())
-                .planId(getTemplateForWorkoutLogNyTemplateId(workout).getPlan().getId())
-                .planName(getTemplateForWorkoutLogNyTemplateId(workout).getPlan().getName())
-                .day(getTemplateForWorkoutLogNyTemplateId(workout).getDay())
+                .planId(template.getPlan().getId())
+                .planName(template.getPlan().getName())
+                .day(template.getDay())
                 .createDate(workout.getCreateDate())
                 .exercises(new ArrayList<>(workoutExerciseDTOList))
                 .build();

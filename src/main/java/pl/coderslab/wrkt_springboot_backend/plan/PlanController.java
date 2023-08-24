@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
-import pl.coderslab.wrkt_springboot_backend.exercise.ExerciseDTO;
 
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class PlanController {
             @ApiResponse(responseCode = "200", description = "successful operation",
                     content = @Content(mediaType = "application/json",schema = @Schema(implementation = PlanDTO.class)))})
     @GetMapping
-    public List<PlanDTO> getPlans(@RequestHeader(value="sessionId") String sessionId,HttpServletRequest request){
+    public List<PlanDTO> getPlans(@RequestHeader(value="sessionId") HttpServletRequest request){
         return planService.getPlans(request.getHeader("sessionId"));
     }
 
