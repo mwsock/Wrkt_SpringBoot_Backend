@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import pl.coderslab.wrkt_springboot_backend.session.InMemorySessionRegistry;
 import pl.coderslab.wrkt_springboot_backend.user.User;
 import pl.coderslab.wrkt_springboot_backend.user.UserRepository;
 
@@ -17,6 +18,7 @@ public class ExerciseService {
 
     private final ExerciseRepository exerciseRepository;
     private final UserRepository userRepository;
+    private final InMemorySessionRegistry registry;
     private final ExerciseMapper exerciseMapper;
     private static final List<String> EXERCISE_TYPE = Arrays.asList(
             "olympic_weightlifting",
@@ -28,13 +30,15 @@ public class ExerciseService {
     private static final String X_API_KEY = "fDMVberKJomXhf6dnyNMUA==qVa6w7rFwW7lEXkE";
     private static final String EXERCISE_API_URL = "https://api.api-ninjas.com/v1/exercises?difficulty=intermediate&type=";
     @Autowired
-    public ExerciseService(ExerciseRepository exerciseRepository, UserRepository userRepository, ExerciseMapper exerciseMapper) {
+    public ExerciseService(ExerciseRepository exerciseRepository, UserRepository userRepository, InMemorySessionRegistry registry, ExerciseMapper exerciseMapper) {
         this.exerciseRepository = exerciseRepository;
         this.userRepository = userRepository;
+        this.registry = registry;
         this.exerciseMapper = exerciseMapper;
     }
 
     public List<ExerciseDTO> getExercises(String sessionId){
+        String userName = registry.getUserNameForSession(sessionId);
         User user = userRepository.findByName(userName);
         return exerciseRepository.findByUser(user).stream()
                 .filter(exercise -> !exercise.isDeleted())
