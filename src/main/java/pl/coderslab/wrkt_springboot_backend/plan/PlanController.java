@@ -32,8 +32,8 @@ public class PlanController {
             @ApiResponse(responseCode = "200", description = "successful operation",
                     content = @Content(mediaType = "application/json",schema = @Schema(implementation = PlanDTO.class)))})
     @GetMapping
-    public List<PlanDTO> getPlans(@RequestHeader(value="sessionId") HttpServletRequest request){
-        return planService.getPlans(request.getHeader("sessionId"));
+    public List<PlanDTO> getPlans(){
+        return planService.getPlans();
     }
 
     @Operation(summary = "Add plan for specific user", description = "Adds a new plan defined by user",

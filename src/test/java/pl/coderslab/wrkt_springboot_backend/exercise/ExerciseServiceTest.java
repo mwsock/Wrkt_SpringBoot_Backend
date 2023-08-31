@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.userdetails.UserDetails;
 import pl.coderslab.wrkt_springboot_backend.session.InMemorySessionRegistry;
 import pl.coderslab.wrkt_springboot_backend.user.User;
 import pl.coderslab.wrkt_springboot_backend.user.UserDTO;
@@ -13,7 +12,6 @@ import pl.coderslab.wrkt_springboot_backend.user.UserRepository;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,7 +72,7 @@ class ExerciseServiceTest {
         when(exerciseMapper.mapToExerciseDTO(exerciseOne)).thenReturn(exerciseDTOOne);
         when(exerciseMapper.mapToExerciseDTO(exerciseThree)).thenReturn(exerciseDTOThree);
         //when
-        List<ExerciseDTO> resultExerciseList = exerciseService.getExercises(sessionId);
+        List<ExerciseDTO> resultExerciseList = exerciseService.getExercises();
         //then
         assertEquals(resultExerciseList,exerciseDTOList);
     }

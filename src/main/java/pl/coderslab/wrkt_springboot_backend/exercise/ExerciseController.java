@@ -32,8 +32,8 @@ public class ExerciseController {
             @ApiResponse(responseCode = "200", description = "successful operation",
                     content = @Content(mediaType = "application/json",schema = @Schema(implementation = ExerciseDTO.class)))})
     @GetMapping("/samples")
-    public List<ExerciseDTO> getSampleExercises(@RequestHeader(value="sessionId") HttpServletRequest request){
-        return exerciseService.getSampleExercises(request.getHeader("sessionId"));
+    public List<ExerciseDTO> getSampleExercises(){
+        return exerciseService.getSampleExercises();
     }
 
     @Operation(summary = "Find exercises for user", description = "Returns a list of exercises defined by user",
@@ -42,8 +42,8 @@ public class ExerciseController {
             @ApiResponse(responseCode = "200", description = "successful operation",
                     content = @Content(mediaType = "application/json",schema = @Schema(implementation = ExerciseDTO.class)))})
     @GetMapping
-    public List<ExerciseDTO> getExercises(@RequestHeader(value="sessionId") HttpServletRequest request){
-        return exerciseService.getExercises(request.getHeader("sessionId"));
+    public List<ExerciseDTO> getExercises(){
+        return exerciseService.getExercises();
     }
 
     @Operation(summary = "Add exercise for specific user", description = "Adds a new exercise defined by user",

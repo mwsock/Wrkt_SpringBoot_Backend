@@ -35,8 +35,8 @@ public class WorkoutController {
                     content = @Content(mediaType = "application/json",schema = @Schema(implementation = ResponseWorkoutDTO.class)))})
     @GetMapping
     @ResponseBody
-    public Set<ResponseWorkoutDTO> getUserWorkouts(@RequestHeader(value="sessionId") String sessionId,HttpServletRequest request){
-        return workoutService.getUserWorkouts(request.getHeader("sessionId"));
+    public Set<ResponseWorkoutDTO> getUserWorkouts(){
+        return workoutService.getUserWorkouts();
     }
 
     @Operation(summary = "Find last workout for user", description = "Returns last workout saved by user",
@@ -46,8 +46,8 @@ public class WorkoutController {
                     content = @Content(mediaType = "application/json",schema = @Schema(implementation = ResponseWorkoutDTO.class)))})
     @GetMapping("/last")
     @ResponseBody
-    public Set<ResponseWorkoutDTO> getLastUserWorkout(@RequestHeader(value="sessionId") String sessionId,HttpServletRequest request){
-        return workoutService.getLastUserWorkout(request.getHeader("sessionId"));
+    public Set<ResponseWorkoutDTO> getLastUserWorkout(){
+        return workoutService.getLastUserWorkout();
     }
 
     @Operation(summary = "Find workout for user for specific plan and day", description = "Returns a workout saved by user for specific plan and day",

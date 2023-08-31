@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import pl.coderslab.wrkt_springboot_backend.exercise.Exercise;
 import pl.coderslab.wrkt_springboot_backend.exercise.ExerciseRepository;
 import pl.coderslab.wrkt_springboot_backend.plan.Plan;
-import pl.coderslab.wrkt_springboot_backend.session.InMemorySessionRegistry;
 import pl.coderslab.wrkt_springboot_backend.template.*;
 import pl.coderslab.wrkt_springboot_backend.user.User;
 import pl.coderslab.wrkt_springboot_backend.user.UserRepository;
@@ -24,7 +23,6 @@ public class WorkoutService {
     private final UserRepository userRepository;
     private final TemplateRepository templateRepository;
     private final ExerciseRepository exerciseRepository;
-    private final InMemorySessionRegistry registry;
     private final RequestWorkoutDTOMapper requestWorkoutDTOMapper;
     private final WorkoutExerciseLogDTOMapper workoutExerciseLogDTOMapper;
     private final TemplateService templateService;
@@ -35,21 +33,19 @@ public class WorkoutService {
                           UserRepository userRepository,
                           TemplateRepository templateRepository,
                           ExerciseRepository exerciseRepository,
-                          InMemorySessionRegistry registry,
                           RequestWorkoutDTOMapper requestWorkoutDTOMapper, WorkoutExerciseLogDTOMapper workoutExerciseLogDTOMapper, TemplateService templateService) {
         this.workoutRepository = workoutRepository;
         this.templateExerciseRepository = templateExerciseRepository;
         this.userRepository = userRepository;
         this.templateRepository = templateRepository;
         this.exerciseRepository = exerciseRepository;
-        this.registry = registry;
         this.requestWorkoutDTOMapper = requestWorkoutDTOMapper;
         this.workoutExerciseLogDTOMapper = workoutExerciseLogDTOMapper;
         this.templateService = templateService;
     }
 
-    public Set<ResponseWorkoutDTO> getUserWorkouts(String sessionId){
-        String userName = registry.getUserNameForSession(sessionId);
+    public Set<ResponseWorkoutDTO> getUserWorkouts(){
+        String userName = "skarpeta";
         User user = getUserByName(userName);
         return getWorkoutByUser(user).stream()
                 .map(this::getResponseWorkoutDTO)
@@ -76,8 +72,8 @@ public class WorkoutService {
         return templateRepository.findById(workout.getTemplateExercise().getTemplateId()).orElse(null);
     }
 
-    public Set<ResponseWorkoutDTO> getLastUserWorkout(String sessionId){
-        String userName = registry.getUserNameForSession(sessionId);
+    public Set<ResponseWorkoutDTO> getLastUserWorkout(){
+        String userName = "skarpeta";
         User user = getUserByName(userName);
         List<Workout> workout = getWorkoutByUser(user);
 

@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import pl.coderslab.wrkt_springboot_backend.session.InMemorySessionRegistry;
-import pl.coderslab.wrkt_springboot_backend.session.SessionFilter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +47,7 @@ class ExerciseControllerTest {
         List<ExerciseDTO> exerciseDTOList = Arrays.asList(exerciseDTOOne,exerciseDTOThree);
         //when
         when(registry.getUserNameForSession(sessionId)).thenReturn("Test User");
-        when(exerciseService.getExercises(sessionId)).thenReturn(exerciseDTOList);
+        when(exerciseService.getExercises()).thenReturn(exerciseDTOList);
         //then
         mockMvc.perform(get("/exercises"))
                 .andExpect(status().is4xxClientError());
